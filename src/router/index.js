@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import MasterView from '@/views/MasterView.vue';
 import PatienView from '../views/PatientView.vue';
 import UpdateView from '../views/UpdateView.vue';
+import LoginView from '@/views/LoginView.vue';
 
 // Function to check if the session is valid (if user is logged in and session has not expired)
 const isSessionValid = () => {
@@ -26,6 +27,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/login',
+      name: 'Login',
+      component: LoginView,
+    },
+    {
       path: '/master',
       name: 'master',
       component: MasterView,
@@ -33,7 +39,7 @@ const router = createRouter({
         if (isSessionValid()) {
           next(); // Allow access if session is valid
         } else {
-          next('/'); // Redirect to home (login) page if session is invalid
+          next('/login'); // Redirect to home (login) page if session is invalid
         }
       },
     },
@@ -46,7 +52,7 @@ const router = createRouter({
         if (isSessionValid()) {
           next(); // Allow access if session is valid
         } else {
-          next('/'); // Redirect to home (login) page if session is invalid
+          next('/login'); // Redirect to home (login) page if session is invalid
         }
       },
     },
@@ -59,7 +65,7 @@ const router = createRouter({
         if (isSessionValid()) {
           next(); // Allow access if session is valid
         } else {
-          next('/'); // Redirect to home (login) page if session is invalid
+          next('/login'); // Redirect to home (login) page if session is invalid
         }
       },
     }
@@ -68,12 +74,20 @@ const router = createRouter({
 
 // Global navigation guard for other routes
 router.beforeEach((to, from, next) => {
-  // If the user is not logged in and tries to access protected routes, redirect them to login
-  if (!isSessionValid() && (to.name === 'master' || to.name === 'patient' || to.name === 'update')) {
-    next('/');  // Redirect to login page
-  } else {
-    next();  // Allow navigation if session is valid
+  const auth = JSON.parse(localStorage.getItem('auth'));
+  const isLoggedIn = auth && auth.loggedIn;
+  const sessionExpired = isLoggedIn && (new Date().getTime() - auth.timestamp) >= (60 * 60 * 1000);
+
+  // If the session is invalid and trying to access protected routes, redirect to login
+  if (!isLoggedIn || sessionExpired) {
+    // If the user is trying to access a protected route, redirect to /portal (login)
+    if (to.name === 'master' || to.name === 'patient' || to.name === 'update') {
+      return next('/login');
+    }
   }
+
+  // Allow navigation to / and /portal even if the session is invalid
+  next(); 
 });
 
 export default router;

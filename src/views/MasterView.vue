@@ -7,8 +7,7 @@
 </template>
 
 <script setup>
-import Sidebar from "../components/SideBar.vue";
-import MobileNav from "../components/MobileNav.vue";
-import MasterContent from "../components/MasterContent.vue";
+  import Sidebar from "../components/SideBar.vue";
+  import MobileNav from "../components/MobileNav.vue";
+  import MasterContent from "../components/MasterContent.vue";
 </script>
-

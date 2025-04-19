@@ -5,7 +5,10 @@ export default {
     extend: {
       colors: {
         primary:'#429AB9'
-       }
+       },
+       backgroundImage: {
+        'hero': "url('@/assets/hero.jpg')",
+      },
     },
     
   },
